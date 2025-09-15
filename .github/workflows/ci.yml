@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies (dev + test)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev,test]"
+
+      - name: Pre-commit (ruff format + lint + mypy)
+        run: |
+          pre-commit run --all-files
+
+      - name: Ruff (explicit lint gate)
+        run: |
+          ruff check .
+
+      - name: Mypy (explicit type gate)
+        run: |
+          mypy .
+
+      - name: Pytest
+        env:
+          # Ensure deterministic runs and avoid any accidental GPU attempts
+          PYTHONHASHSEED: "0"
+        run: |
+          pytest -q

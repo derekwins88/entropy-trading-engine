@@ -1,5 +1,7 @@
 # Entropy Trading Engine
 
+![CI](https://github.com/<YOUR_GH_USER_OR_ORG>/entropy-trading-engine/actions/workflows/ci.yml/badge.svg)
+
 Production-ready skeleton for an entropy-driven trading assistant extending Derek's "Brain" proof system.
 
 ## Quickstart
