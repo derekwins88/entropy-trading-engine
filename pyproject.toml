@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "entropy-trading-engine"
+version = "0.1.0"
+description = "Entropy-driven trading engine with proof capsules, GPU-ready backtesting, and a FastAPI service."
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.111",
+  "uvicorn[standard]>=0.30",
+  "pydantic>=2.7",
+  "pydantic-settings>=2.3",
+  "numpy>=1.26",
+  "pandas>=2.2",
+  "scipy>=1.13",
+  "sqlalchemy>=2.0",
+  "pyyaml>=6.0",
+  "aiofiles>=23.2",
+  "httpx>=0.27",
+  "orjson>=3.10",
+  "prometheus-client>=0.20",
+]
+
+[project.optional-dependencies]
+gpu = ["cupy-cuda12x>=13.0; platform_system == 'Linux'"]
+db = ["psycopg2-binary>=2.9", "asyncpg>=0.29"]
+test = ["pytest>=8.2", "pytest-asyncio>=0.23", "httpx>=0.27", "mypy>=1.10", "ruff>=0.5"]
+dev = ["pre-commit>=3.7", "mypy>=1.10", "ruff>=0.5"]
+
+[project.scripts]
+entropy-backtest = "entropy_cli.backtest:main"
+entropy-service = "entropy_cli.service:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+lint.select = ["E","F","I","UP","B","SIM","PLE","PYI"]
+lint.ignore = ["E501"]
+exclude = ["build", "dist", ".venv"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = false
+check_untyped_defs = true
+no_implicit_optional = true
+strict_equality = true
+plugins = []
+exclude = '(build|dist|.venv|notebooks)'
+ignore_missing_imports = true
