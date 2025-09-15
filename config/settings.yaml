@@ -1,0 +1,16 @@
+symbols: ["SPY", "QQQ", "VTI", "BTC-USD", "ETH-USD"]
+sources: ["simulated"]
+entropy:
+  window: 21
+  p_threshold: 0.045
+  np_threshold: 0.09
+risk:
+  max_position_size: 0.25
+  entropy_confidence_threshold: 0.85
+backtest:
+  start_capital: 100000
+database:
+  url: "sqlite:///./entropy_capsules.db"
+service:
+  host: "0.0.0.0"
+  port: 8000
