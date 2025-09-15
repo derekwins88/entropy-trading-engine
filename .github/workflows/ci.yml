@@ -12,7 +12,12 @@ concurrency:
 
 jobs:
   build-test:
+    name: Lint • Type • Test (py${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
 
     steps:
       - name: Checkout
@@ -21,29 +26,60 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-          cache: "pip"
+          python-version: ${{ matrix.python-version }}
+          cache: pip
 
       - name: Install dependencies (dev + test)
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev,test]"
 
-      - name: Pre-commit (ruff format + lint + mypy)
+      - name: Ruff format check
         run: |
-          pre-commit run --all-files
+          ruff format --check .
 
-      - name: Ruff (explicit lint gate)
+      - name: Ruff lint
         run: |
           ruff check .
 
-      - name: Mypy (explicit type gate)
+      - name: Mypy
         run: |
           mypy .
 
       - name: Pytest
         env:
-          # Ensure deterministic runs and avoid any accidental GPU attempts
           PYTHONHASHSEED: "0"
         run: |
           pytest -q
+
+  smoke:
+    name: API Smoke
+    needs: build-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install runtime deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e . uvicorn[standard]
+
+      - name: Launch API
+        run: |
+          nohup python -m uvicorn services.api:app --host 127.0.0.1 --port 8001 > uvicorn.log 2>&1 &
+          for i in {1..25}; do
+            curl -fsS http://127.0.0.1:8001/health && break || sleep 0.5
+          done
+
+      - name: Probe endpoints
+        run: |
+          curl -fsS http://127.0.0.1:8001/health
+          curl -fsS http://127.0.0.1:8001/metrics | head -n 20
+
