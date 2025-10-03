@@ -1,6 +1,6 @@
 # EntropyLab ⚡  
 Turn market chaos into backtests in 13 seconds.  
-`pip install entropylab` → [Get Pro](https://entropylab.co)
+`pip install entropylab` → [Get Pro](derekespinoza88@gmail.com)
 
 <!-- (Keep your existing README content below this line) -->
 
