@@ -1,3 +1,9 @@
+# EntropyLab ⚡  
+Turn market chaos into backtests in 13 seconds.  
+`pip install entropylab` → [Get Pro](https://entropylab.co)
+
+<!-- (Keep your existing README content below this line) -->
+
 # Entropy Trading Engine
 
 ![CI](https://github.com/<YOUR_GH_USER_OR_ORG>/entropy-trading-engine/actions/workflows/ci.yml/badge.svg)
@@ -31,3 +37,7 @@ Config
 Edit config/settings.yaml or use ENV (prefix ENTROPY_) to override thresholds, DB URL, symbols.
 
 Disclaimer: Research software. Not investment advice.
+
+## Commercial Use
+See [LICENSE](LICENSE).  
+Pro upgrade removes watermark & adds live-broker plugins.
